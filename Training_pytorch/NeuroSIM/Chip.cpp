@@ -848,7 +848,7 @@ double ChipCalculatePerformance(InputParameter& inputParameter, Technology& tech
 				vector<vector<double> > tileInput;
 				tileInput = ReshapeInput(inputVector, i*desiredPESizeNM, (int) (netStructure[l][0]-netStructure[l][3]+1)*(netStructure[l][1]-netStructure[l][4]+1)*param->numBitInput, 
 									(int) netStructure[l][2]*numRowPerSynapse/numtileEachLayerRow, numPENM, (int) netStructure[l][2]*numRowPerSynapse);
-	
+				
 				TileCalculatePerformance(tileMemory, tileMemoryOld, tileInput, markNM[l], layerNumber, numPENM, desiredPESizeNM, speedUpEachLayer[0][l], speedUpEachLayer[1][l],
 									numRowMatrix, numColMatrix, numInVector*param->numBitInput, tech, cell, 
 									&tileReadLatency, &tileReadDynamicEnergy, &tileLeakage, &tileReadLatencyAG, &tileReadDynamicEnergyAG, &tileWriteLatencyWU, &tileWriteDynamicEnergyWU,
@@ -856,7 +856,6 @@ double ChipCalculatePerformance(InputParameter& inputParameter, Technology& tech
 									&tileLatencyADC, &tileLatencyAccum, &tileLatencyOther, &tileEnergyADC, &tileEnergyAccum, &tileEnergyOther, 
 									&tileReadLatencyPeakFW, &tileReadDynamicEnergyPeakFW, &tileReadLatencyPeakAG, &tileReadDynamicEnergyPeakAG,
 									&tileWriteLatencyPeakWU, &tileWriteDynamicEnergyPeakWU);
-				
 				*readLatency = MAX(tileReadLatency, (*readLatency));
 				*readDynamicEnergy += tileReadDynamicEnergy;
 				*readLatencyPeakFW = MAX(tileReadLatencyPeakFW, (*readLatencyPeakFW));

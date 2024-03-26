@@ -54,10 +54,10 @@ using namespace std;
 
 Param::Param() {
 	/***************************************** user defined design options and parameters *****************************************/
-	operationmode = 2;     		// 1: conventionalSequential (Use several multi-bit RRAM as one synapse)
+	operationmode = 1;     		// 1: conventionalSequential (Use several multi-bit RRAM as one synapse)
 								// 2: conventionalParallel (Use several multi-bit RRAM as one synapse)
 	
-	memcelltype = 3;        	// 1: cell.memCellType = Type::SRAM
+	memcelltype = 2;        	// 1: cell.memCellType = Type::SRAM
 								// 2: cell.memCellType = Type::RRAM
 								// 3: cell.memCellType = Type::FeFET
 	
@@ -90,12 +90,12 @@ Param::Param() {
 	reLu = true;                // false: sigmoid
 								// true: reLu
 								
-	novelMapping = true;        // false: conventional mapping
+	novelMapping = false;        // false: conventional mapping
 								// true: novel mapping
 	
 	SARADC = false;              // false: MLSA
 	                            // true: sar ADC
-	currentMode = true;         // false: MLSA use VSA
+	currentMode = false;         // false: MLSA use VSA
 	                            // true: MLSA use CSA
 
 	pipeline = false;            // false: layer-by-layer process --> huge leakage energy in HP
@@ -182,7 +182,7 @@ Param::Param() {
 	trainingEstimation = true; 		// false: only run estimation for inference chip
 										// true: run estimation for both inference and training on-chip
 	
-	parallelBP = true;          		// false: conventionalSequential (Use several multi-bit RRAM as one synapse)
+	parallelBP = false;          		// false: conventionalSequential (Use several multi-bit RRAM as one synapse)
 										// true: conventionalParallel (Use several multi-bit RRAM as one synapse)
 	
 	batchSize = 200;                    // batchSize in training
@@ -199,7 +199,7 @@ Param::Param() {
 	numRowMuxedWG = 8;                  // How many columns share 1 ADC (for Transpose array) in gradient calculation of weight
 	levelOutputWG = 16;                 // # of levels of the multilevelSenseAmp output, in gradient calculation of weight
 
-	dramType = 2;                       // 1: GDDR5
+	dramType = 1;                       // 1: GDDR5
 										// 2: HBM2
 	
 	/***************************************** user defined design options and parameters *****************************************/

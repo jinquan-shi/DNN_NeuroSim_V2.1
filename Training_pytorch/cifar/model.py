@@ -29,6 +29,26 @@ class CIFAR(nn.Module):
         x = self.classifier(x)
         return x
 
+class MLP(nn.Module):
+    
+    def __init__(self, args, features,num_classes, logger):
+        super(MLP, self).__init__()
+        assert isinstance(features, nn.Sequential), type(features)
+        self.features = features
+        self.classifier = nn.Sequential(
+            QLinear(64, num_classes, logger=logger,
+                    wl_input = args.wl_activate,wl_activate=-1, wl_error=args.wl_error,
+                    wl_weight=args.wl_weight,inference=args.inference,onoffratio=args.onoffratio,cellBit=args.cellBit,
+                    subArray=args.subArray,ADCprecision=args.ADCprecision,vari=args.vari,t=args.t,v=args.v,detect=args.detect,target=args.target,name='FC4_')
+        )
+        print(self.classifier)
+    
+    def forward(self, x):
+        x = x.view(x.size(0), -1)
+        x = self.features(x)
+        x = self.classifier(x)
+        return x
+
 
 def make_layers(cfg, args, logger ):
     layers = []
@@ -47,9 +67,20 @@ def make_layers(cfg, args, logger ):
                              wl_error=args.wl_error,wl_weight= args.wl_weight,inference=args.inference,onoffratio=args.onoffratio,cellBit=args.cellBit,
                              subArray=args.subArray,ADCprecision=args.ADCprecision,vari=args.vari,t=args.t,v=args.v,detect=args.detect,target=args.target,
                              name = 'Conv'+str(i)+'_' )
-            non_linearity_activation =  nn.ReLU()
+            non_linearity_activation =  nn.ReLU(inplace=True)
             layers += [conv2d, non_linearity_activation]
             in_channels = out_channels
+        if v[0] == 'FC':
+            linear = QLinear(v[1], v[2], logger=logger,
+                             wl_input = args.wl_activate,wl_activate=args.wl_activate,wl_error=args.wl_error,
+                             wl_weight=args.wl_weight,inference=args.inference,onoffratio=args.onoffratio,cellBit=args.cellBit,
+                             subArray=args.subArray,ADCprecision=args.ADCprecision,vari=args.vari,t=args.t,v=args.v,detect=args.detect,target=args.target,
+                             name = 'FC'+str(i)+'_')
+            if i != len(cfg) - 1:
+                non_linearity_activation =  nn.ReLU(inplace=True)
+                layers += [linear, non_linearity_activation]
+            else:
+                layers += [linear]
     return nn.Sequential(*layers)
 
 
@@ -63,7 +94,13 @@ cfg_list = {
                 ('M', 2, 2),
                 ('C', 512, 3, 'same', 16.0),
                 ('C', 512, 3, 'same', 32.0),
-                ('M', 2, 2)]
+                ('M', 2, 2)],
+    'mlp': [
+        ('FC', 784, 512),
+        ('FC', 512, 256),
+        ('FC', 256, 128),
+        ('FC', 128, 64),
+    ]
 }
 
 def cifar10( args, logger, pretrained=None):
@@ -74,4 +111,10 @@ def cifar10( args, logger, pretrained=None):
         model.load_state_dict(torch.load(pretrained))
     return model
 
-
+def mlp(args, logger, pretrained=None):
+    cfg = cfg_list['mlp']
+    layers = make_layers(cfg, args,logger)
+    model = MLP(args, layers, num_classes=10,logger = logger)
+    if pretrained is not None:
+        model.load_state_dict(torch.load(pretrained))
+    return model
